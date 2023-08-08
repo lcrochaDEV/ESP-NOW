@@ -5,7 +5,7 @@
 #include <espnow.h>
 
 //Coloque na linha abaixo o Mac Address do NodeMCU receptor
-uint8_t broadcastAddress[] = {0x60, 0x01, 0x94, 0x0A, 0x87, 0x72};
+uint8_t broadcastAddress[] = {0xA4, 0xCF, 0x12, 0xEF, 0xA8, 0x13};
 
 //Estrutura para envio dos dados. Deve ser a mesma tanto no emissor como no receptor.
 typedef struct struct_message {
@@ -14,7 +14,7 @@ typedef struct struct_message {
 struct_message;
 
 //Definicoes botao
-#define pino_botao D2
+#define GPIO_0 0
 bool inverte_led = 0;
 int valor;
 
@@ -33,9 +33,11 @@ void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
 
 void setup() {
   Serial.begin(115200);
+  delay(3000);
+  Serial.println("O ESP-NOW Emissor Iniciou...");
 
   //Inicializa o pino do botao
-  pinMode(pino_botao, INPUT);
+  pinMode(GPIO_0, INPUT);
 
   //Coloca o dispositivo no modo Wi-Fi Station
   WiFi.mode(WIFI_STA);
@@ -53,9 +55,9 @@ void setup() {
 }
 
 void loop() {
-  valor = digitalRead(pino_botao);
+  valor = digitalRead(GPIO_0);
   if (valor == 1) {
-    while (digitalRead(pino_botao) == 1) {
+    while (digitalRead(GPIO_0) == 1) {
       delay(50);
     }
     Serial.println("Botao pressionado!");

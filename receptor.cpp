@@ -5,18 +5,20 @@
 #include <espnow.h>
 
 //Estrutura para envio dos dados. Deve ser a mesma tanto no emissor como no receptor.
-typedef struct struct_message {
+typedef struct struct_message
+{
   String a;
 } struct_message;
 
 //Definicoes led
-#define pino_led D1
+#define GPIO_0 0
 
 //Cria uma struct_message chamada myData
 struct_message myData;
 
 //Funcao de Callback executada quando a mensagem for recebida
-void OnDataRecv(uint8_t * mac, uint8_t *incomingData, uint8_t len) {
+void OnDataRecv(uint8_t * mac, uint8_t *incomingData, uint8_t len)
+{
   memcpy(&myData, incomingData, sizeof(myData));
   Serial.println();
   Serial.print("Bytes recebidos: ");
@@ -27,22 +29,26 @@ void OnDataRecv(uint8_t * mac, uint8_t *incomingData, uint8_t len) {
   String dado_recebido = myData.a;
 
   //Acende ou apaga o led de acordo com a String recebida
-  if (dado_recebido == "L_Led") {
+  if (dado_recebido == "L_Led")
+  {
     Serial.println("Recebido Liga Led!");
-    digitalWrite(pino_led, LOW);
+    digitalWrite(GPIO_0, LOW);
   }
 
-  if (dado_recebido == "D_Led") {
+  if (dado_recebido == "D_Led")
+  {
     Serial.println("Recebido Desliga Led!");
-    digitalWrite(pino_led, HIGH);
+    digitalWrite(GPIO_0, HIGH);
   }
 }
 
 void setup() {
   Serial.begin(115200);
+  delay(3000);
+  Serial.println("O ESP-NOW Receptor Iniciou...");
 
-  pinMode(pino_led, OUTPUT);
-  digitalWrite(pino_led, HIGH);
+  pinMode(GPIO_0, OUTPUT);
+  digitalWrite(GPIO_0, HIGH);
 
   //Coloca o dispositivo no modo Wi-Fi Station
   WiFi.mode(WIFI_STA);
@@ -56,6 +62,4 @@ void setup() {
   esp_now_register_recv_cb(OnDataRecv);
 }
 
-void loop(){
-  //Neste programa nao temos comandos no loop
-}
+void loop(){}
