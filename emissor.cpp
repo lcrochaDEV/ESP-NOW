@@ -34,8 +34,6 @@ void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
 void setup() {
   Serial.begin(115200);
   delay(3000);
-  Serial.println("O ESP-NOW Emissor Iniciou...");
-
   //Inicializa o pino do botao
   pinMode(GPIO_0, INPUT);
 
@@ -46,6 +44,8 @@ void setup() {
   if (esp_now_init() != 0) {
     Serial.println("Erro ao inicializar o ESP-NOW");
     return;
+  }else {
+  Serial.println("O ESP-NOW Emissor Iniciou...");
   }
   esp_now_set_self_role(ESP_NOW_ROLE_CONTROLLER);
   esp_now_register_send_cb(OnDataSent);
