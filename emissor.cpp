@@ -10,7 +10,7 @@ uint8_t broadcastAddress[] = {0xA4, 0xCF, 0x12, 0xEF, 0xA8, 0x13};
 //Estrutura para envio dos dados. Deve ser a mesma tanto no emissor como no receptor.
 typedef struct struct_message {
   String a;
-} 
+}
 struct_message;
 
 //Definicoes botao
