@@ -1,4 +1,4 @@
-<img width="300" src="./imgens/esp-now-logo.svg" style="max-width: 100%;">
+<img width="300" src="./imgens/esp-now-logo.png" style="max-width: 100%;">
  
 # Passos de Configuração do ESP-NOW
 
