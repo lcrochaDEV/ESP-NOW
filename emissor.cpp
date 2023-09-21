@@ -8,10 +8,10 @@
 uint8_t broadcastAddress[] = {0xA4, 0xCF, 0x12, 0xEF, 0xA8, 0x13};
 
 //Estrutura para envio dos dados. Deve ser a mesma tanto no emissor como no receptor.
-typedef struct struct_message {
+typedef struct struct_message
+{
   String a;
-}
-struct_message;
+} struct_message;
 
 //Definicoes botao
 #define GPIO_0 0
@@ -22,18 +22,21 @@ int valor;
 struct_message myData;
 
 //Callback quando os dados sao enviados
-void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
+void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus)
+{
   Serial.print("Status dos dados enviados: ");
   if (sendStatus == 0) {
     Serial.println("Envio ok!");
-  } else {
+  }
+  else {
     Serial.println("Falha no envio!");
   }
 }
 
-void setup() {
+void setup()
+{
   Serial.begin(115200);
-  delay(3000);
+
   //Inicializa o pino do botao
   pinMode(GPIO_0, INPUT);
 
@@ -44,8 +47,6 @@ void setup() {
   if (esp_now_init() != 0) {
     Serial.println("Erro ao inicializar o ESP-NOW");
     return;
-  }else {
-  Serial.println("O ESP-NOW Emissor Iniciou...");
   }
   esp_now_set_self_role(ESP_NOW_ROLE_CONTROLLER);
   esp_now_register_send_cb(OnDataSent);
@@ -54,10 +55,13 @@ void setup() {
   esp_now_add_peer(broadcastAddress, ESP_NOW_ROLE_SLAVE, 1, NULL, 0);
 }
 
-void loop() {
+void loop()
+{
   valor = digitalRead(GPIO_0);
-  if (valor == 1) {
-    while (digitalRead(GPIO_0) == 1) {
+  if (valor == 1)
+  {
+    while (digitalRead(GPIO_0) == 1)
+    {
       delay(50);
     }
     Serial.println("Botao pressionado!");
@@ -65,10 +69,12 @@ void loop() {
     inverte_led = !inverte_led;
 
     //Envia a string de acordo com o estado do led
-    if (inverte_led == 1) {
+    if (inverte_led == 1)
+    {
       myData.a = "L_Led";
     }
-    if (inverte_led == 0) {
+    if (inverte_led == 0)
+    {
       myData.a = "D_Led";
     }
 
