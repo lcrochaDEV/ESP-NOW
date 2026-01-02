@@ -15,6 +15,7 @@ typedef struct struct_message
 
 //Definicoes botao
 #define GPIO_0 0
+#define GPIO_1 1
 bool inverte_led = 0;
 int valor;
 
@@ -39,6 +40,7 @@ void setup()
 
   //Inicializa o pino do botao
   pinMode(GPIO_0, INPUT);
+  pinMode(GPIO_1, INPUT);
 
   //Coloca o dispositivo no modo Wi-Fi Station
   WiFi.mode(WIFI_STA);
@@ -57,10 +59,10 @@ void setup()
 
 void loop()
 {
-  valor = digitalRead(GPIO_0);
+  valor = digitalRead(GPIO_0) || digitalRead(GPIO_1);
   if (valor == 1)
   {
-    while (digitalRead(GPIO_0) == 1)
+    while (digitalRead(GPIO_0) == 1 || digitalRead(GPIO_1) == 1)
     {
       delay(50);
     }
