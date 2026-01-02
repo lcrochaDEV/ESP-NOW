@@ -1,0 +1,46 @@
+#ifndef ESPNOW_H
+#define ESPNOW_H
+
+#include <Arduino.h>
+
+#include <array> 
+
+#if defined(ESP8266)
+    #include <ESP8266WiFi.h>
+    #include <espnow.h>
+#elif defined(ESP32)
+    #include <WiFi.h>
+    #include <esp_now.h>
+#endif
+
+typedef struct struct_message {
+    char a[32]; // Usar array de char é mais seguro que String para ESP-NOW
+} struct_message;
+
+
+class EspNow {
+  public:
+    EspNow(const std::array<uint8_t, 6>& broadcastAddress, int pinNumber = -1);
+    void nowSetup();
+    void beginRun();
+    void update(uint32_t intervalMs = 50); //chamada no loop()
+
+  private:
+    bool inverte_led = false;
+    int valor;
+    std::array<uint8_t, 6> broadcastAddress;     // Armazena o endereço MAC (6 bytes)
+    int pinNumber;                               // Armazena o ponteiro para o pino/senha
+    struct_message myData;                       //Cria uma struct_message chamada myData
+    uint32_t _ultimoTempo = 0;                   // Variáveis para o controle de tempo (millis)
+
+    // O callback deve ser estático ou uma função global
+    #if defined(ESP32)
+        static void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
+    #else
+        static void OnDataSent(uint8_t *mac_addr, uint8_t status);
+    #endif
+};
+
+#endif
+//Programa: ESP-NOW com ESP8266 NodeMCU - Emissor
+//Autor: Arduino e Cia
