@@ -31,11 +31,8 @@ void EspNow::OnDataRecv(const esp_now_recv_info_t * recv_info, const uint8_t *in
 void EspNow::OnDataRecv(uint8_t * mac, uint8_t *incomingData, uint8_t len) {
     memcpy(&myData, incomingData, sizeof(myData));
     
-    if (strcmp(myData.a, "L_Led") == 0) {
-        digitalWrite(_staticLedPin, HIGH);
-    } else if (strcmp(myData.a, "D_Led") == 0) {
-        digitalWrite(_staticLedPin, LOW);
-    }
+    if (strcmp(myData.a, "L_Led") == 0) digitalWrite(_staticLedPin, HIGH);
+    else if (strcmp(myData.a, "D_Led") == 0) digitalWrite(_staticLedPin, LOW);
 }
 #endif
 
@@ -89,11 +86,8 @@ void EspNow::beginRunSent() {
     //Inverte o estado do led
     inverte_led = !inverte_led;
     //Envia a string de acordo com o estado do led
-    if (inverte_led) {
-        strcpy(myData.a, "L_Led");
-    } else {
-        strcpy(myData.a, "D_Led");
-    }
+    if (inverte_led) strcpy(myData.a, "L_Led");
+    else strcpy(myData.a, "D_Led");
     // Envia a mensagem usando o ESP-NOW
     esp_now_send(broadcastAddress.data(), (uint8_t *) &myData, sizeof(myData));
   }
