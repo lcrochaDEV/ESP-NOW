@@ -1,7 +1,7 @@
 #include "EspNow.h"
 
 // Endereço MAC do receptor (substitua pelo seu)
-uint8_t receptorMAC[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+std::array<uint8_t, 6> receptorMAC = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 // Instancia a classe (Pino 4 para o botão, por exemplo)
 EspNow comunicacao(receptorMAC, 4);
@@ -12,8 +12,71 @@ void setup() {
 }
 
 void loop() {
-  comunicacao.beginRun();
+  comunicacao.beginRunSent();
 }
+
+// Para chamar a classe no setup() quando o módulo for apenas emissor
+/*
+#include <Arduino.h>
+#include "EspNow.h"
+
+// 1. Defina o endereço MAC do módulo RECEPTOR (o que tem o LED)
+// Se quiser enviar para todos ao redor, use {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}
+std::array<uint8_t, 6> macReceptor = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF}; 
+
+// 2. Instancie a classe. 
+// O primeiro parâmetro é o endereço acima.
+// O segundo é o pino onde o BOTÃO está conectado (ex: GPIO 4)
+EspNow emissor(macReceptor, 4);
+
+void setup() {
+    Serial.begin(115200);
+
+    // 3. Inicializa o Wi-Fi e as configurações do protocolo ESP-NOW
+    emissor.nowSetup();
+    
+    Serial.println("Configurado como Emissor.");
+}
+
+void loop() {
+    // 4. Chama o update para verificar se o botão foi pressionado
+    // O valor 50ms é o intervalo de checagem (debounce)
+    emissor.updateSent(50);
+}
+*/
+
+// Para configurar o módulo como apenas receptor
+/*
+#include <Arduino.h>
+#include "EspNow.h"
+
+// 1. Defina o endereço MAC do EMISSOR (opcional para o receptor simples)
+// No receptor, o endereço passado aqui não afeta a recepção de dados, 
+// mas é necessário para instanciar a classe.
+std::array<uint8_t, 6> macEmissor = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; 
+
+// 2. Instancie a classe.
+// O segundo parâmetro (2) é o pino onde o LED está conectado.
+EspNow receptor(macEmissor, 2);
+
+void setup() {
+    Serial.begin(115200);
+
+    // 3. Inicializa o ESP-NOW e registra os callbacks de recepção
+    receptor.nowSetup();
+
+    // 4. ESSENCIAL: Configura o pino como SAÍDA e inicializa o LED desligado
+    receptor.beginRunRecv();
+
+    Serial.println("Configurado como Receptor. Aguardando comandos...");
+}
+
+void loop() {
+    // 5. O receptor não precisa de nada no loop!
+    // Quando uma mensagem chega, a função OnDataRecv é chamada automaticamente
+    // pelo sistema (via interrupção), executando a lógica do LED.
+}
+*/
 
 
 // Chamada com millis

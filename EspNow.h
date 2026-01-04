@@ -22,22 +22,30 @@ class EspNow {
   public:
     EspNow(const std::array<uint8_t, 6>& broadcastAddress, int pinNumber = -1);
     void nowSetup();
-    void beginRun();
-    void update(uint32_t intervalMs = 50); //chamada no loop()
+    void beginRunSent();
+    void updateSent(uint32_t intervalMs = 50); //chamada no loop()
+    void beginRunRecv();
 
   private:
     bool inverte_led = false;
     int valor;
     std::array<uint8_t, 6> broadcastAddress;     // Armazena o endereço MAC (6 bytes)
     int pinNumber;                               // Armazena o ponteiro para o pino/senha
-    struct_message myData;                       //Cria uma struct_message chamada myData
+    static struct_message myData;                       // Cria uma struct_message chamada myData
     uint32_t _ultimoTempo = 0;                   // Variáveis para o controle de tempo (millis)
+    static int _staticLedPin;
 
     // O callback deve ser estático ou uma função global
     #if defined(ESP32)
-        static void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
+        static void OnDataSent(const esp_now_send_info_t *mac_addr, esp_now_send_status_t status);
     #else
         static void OnDataSent(uint8_t *mac_addr, uint8_t status);
+    #endif
+    // Callback de recepção
+    #if defined(ESP32)
+        static void OnDataRecv(const esp_now_recv_info_t * recv_info, const uint8_t *incomingData, int len);
+    #else
+        static void OnDataRecv(uint8_t * mac_addr, uint8_t *incomingData, uint8_t len);
     #endif
 };
 
