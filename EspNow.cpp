@@ -46,9 +46,7 @@ void EspNow::nowSetup() {
   //Serial.begin(115200);
 
     //Inicializa o pino do botao
-    if (pinNumber != -1) {
-        pinMode(pinNumber, INPUT);
-    }
+    if (pinNumber != -1) pinMode(pinNumber, INPUT);
 
     //Coloca o dispositivo no modo Wi-Fi Station
     WiFi.mode(WIFI_STA);

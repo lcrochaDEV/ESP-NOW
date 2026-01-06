@@ -38,13 +38,9 @@ class EspNow {
     // O callback deve ser estático ou uma função global
     #if defined(ESP32)
         static void OnDataSent(const esp_now_send_info_t *mac_addr, esp_now_send_status_t status);
-    #else
-        static void OnDataSent(uint8_t *mac_addr, uint8_t status);
-    #endif
-    // Callback de recepção
-    #if defined(ESP32)
         static void OnDataRecv(const esp_now_recv_info_t * recv_info, const uint8_t *incomingData, int len);
-    #else
+    #elif defined(ESP8266)
+        static void OnDataSent(uint8_t *mac_addr, uint8_t status);
         static void OnDataRecv(uint8_t * mac_addr, uint8_t *incomingData, uint8_t len);
     #endif
 };
