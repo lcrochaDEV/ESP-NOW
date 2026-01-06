@@ -20,18 +20,23 @@ typedef struct struct_message {
 
 class EspNow {
   public:
-    EspNow(const std::array<uint8_t, 6>& broadcastAddress, int pinNumber = -1);
+    EspNow(const std::array<uint8_t, 6>& broadcastAddress, int pinNumber = -1, const char* tagName = nullptr);
     void nowSetup();
     void beginRunSent();
     void updateSent(uint32_t intervalMs = 50); //chamada no loop()
     void beginRunRecv();
 
   private:
+    static void processCommand(const char* message);
     bool inverte_led = false;
     int valor;
     std::array<uint8_t, 6> broadcastAddress;     // Armazena o endereço MAC (6 bytes)
-    int pinNumber;                               // Armazena o ponteiro para o pino/senha
-    static struct_message myData;                       // Cria uma struct_message chamada myData
+    int pinNumber;                    
+    const char* tagName;
+     
+    // Armazena o ponteiro para o pino/senha
+    static const char* _tagNameStatic;          // Tag Name dos Pinos/Apelidos
+    static struct_message myData;                // Cria uma struct_message chamada myData
     uint32_t _ultimoTempo = 0;                   // Variáveis para o controle de tempo (millis)
     static int _staticLedPin;
 
