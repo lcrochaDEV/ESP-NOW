@@ -1,0 +1,51 @@
+#ifndef ESPNOW_H
+#define ESPNOW_H
+
+#include <Arduino.h>
+
+#include <array> 
+
+#if defined(ESP8266)
+    #include <ESP8266WiFi.h>
+    #include <espnow.h>
+#elif defined(ESP32)
+    #include <WiFi.h>
+    #include <esp_now.h>
+#endif
+
+typedef struct struct_message {
+    char a[32]; // Usar array de char é mais seguro que String para ESP-NOW
+} struct_message;
+
+
+class EspNow {
+  public:
+    EspNow(const std::array<uint8_t, 6>& broadcastAddress, int pinNumber = -1);
+    void nowSetup();
+    void beginRunSent();
+    void updateSent(uint32_t intervalMs = 50); //chamada no loop()
+    void beginRunRecv();
+
+  private:
+    bool inverte_led = false;
+    int valor;
+    std::array<uint8_t, 6> broadcastAddress;     // Armazena o endereço MAC (6 bytes)
+    int pinNumber;                               // Armazena o ponteiro para o pino/senha
+    uint32_t _ultimoTempo = 0;                   // Variáveis para o controle de tempo (millis)
+    // Membros estáticos para acesso via Callbacks
+    static int _staticLedPin;
+    static struct_message _myData;
+ 
+    #if defined(ESP32)
+        // CORREÇÃO: O tipo correto é const uint8_t* para o endereço MAC
+        static void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status);
+        static void OnDataRecv(const esp_now_recv_info_t *recv_info, const uint8_t *incomingData, int len);
+    #elif defined(ESP8266)
+        static void OnDataSent(uint8_t *mac_addr, uint8_t status);
+        static void OnDataRecv(uint8_t *mac, uint8_t *incomingData, uint8_t len);
+    #endif
+};
+
+#endif
+//Programa: ESP-NOW com ESP8266 NodeMCU - Emissor
+//Autor: Arduino e Cia
